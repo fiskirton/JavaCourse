@@ -11,6 +11,12 @@ public class PersonInfo {
             "а"
     };
 
+    private final static String[] exception_names = {
+            "никита",
+            "илья",
+            "данила"
+    };
+
     private String surname;
     private String name;
     private String patronymic;
@@ -18,7 +24,6 @@ public class PersonInfo {
 
     public PersonInfo(final String input){
         String[] parsed = input.split(" ");
-
         this.surname = PersonInfo.capitalize(parsed[0]);
         this.name = PersonInfo.capitalize(parsed[1]);
         this.patronymic = PersonInfo.capitalize(parsed[2]);
@@ -30,6 +35,14 @@ public class PersonInfo {
     }
 
     private String getSex(){
+
+        for (String exception_name :
+                exception_names){
+            if (this.name.toLowerCase().equals(exception_name)){
+                return "male";
+            }
+        }
+
         for (String ending :
                 endings) {
             if (this.name.lastIndexOf(ending) > 0){
