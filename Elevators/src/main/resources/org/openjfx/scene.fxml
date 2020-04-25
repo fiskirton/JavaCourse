@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0"
+      prefWidth="800.0" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.openjfx.controllers.ElevatorController">
+   <HBox alignment="TOP_CENTER" cacheShape="false" depthTest="DISABLE" prefHeight="438.0" prefWidth="800.0"
+         spacing="10.0">
+      <opaqueInsets>
+         <Insets/>
+      </opaqueInsets>
+      <padding>
+         <Insets bottom="10.0" top="10.0"/>
+      </padding>
+      <TextArea fx:id="sender" editable="false" prefHeight="200.0" prefWidth="200.0" wrapText="true" HBox.hgrow="ALWAYS">
+         <opaqueInsets>
+            <Insets/>
+         </opaqueInsets>
+         <HBox.margin>
+            <Insets left="10.0"/>
+         </HBox.margin>
+      </TextArea>
+      <TextArea fx:id="handler" editable="false" prefHeight="200.0" prefWidth="200.0" wrapText="true" HBox.hgrow="ALWAYS"/>
+      <TextArea fx:id="process" editable="false" prefHeight="200.0" prefWidth="200.0" wrapText="true" HBox.hgrow="ALWAYS">
+         <HBox.margin>
+            <Insets right="10.0"/>
+         </HBox.margin>
+      </TextArea>
+   </HBox>
+   <HBox alignment="CENTER" layoutX="1.0" layoutY="442.0" prefHeight="56.0" prefWidth="800.0" spacing="10.0">
+      <opaqueInsets>
+         <Insets/>
+      </opaqueInsets>
+      <Button fx:id="up" mnemonicParsing="false" prefHeight="40.0" prefWidth="253.0" text="Up" HBox.hgrow="ALWAYS"
+              onAction="#pushUpButton"/>
+      <Button fx:id="down" mnemonicParsing="false" prefHeight="40.0" prefWidth="253.0" text="Down" HBox.hgrow="ALWAYS"
+               onAction="#pushDownButton"/>
+      <Button fx:id="off" mnemonicParsing="false" prefHeight="40.0" prefWidth="253.0" text="Off" HBox.hgrow="ALWAYS"
+               onAction="#pushOffButton">
+         <HBox.margin>
+            <Insets/>
+         </HBox.margin>
+      </Button>
+   </HBox>
+</Pane>
