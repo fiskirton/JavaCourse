@@ -1,5 +1,7 @@
 package org.elevators.containers;
 
+import org.elevators.util.Config;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -19,7 +21,8 @@ public class Building {
 	}
 
 	public void init() {
-		for (int i = 0; i < 3; i++) {
+		int n = Config.getElevatorsNum();
+		for (int i = 0; i < n; i++) {
 			plugElevator(new Elevator(i + 2, i + 1));
 		}
 	}

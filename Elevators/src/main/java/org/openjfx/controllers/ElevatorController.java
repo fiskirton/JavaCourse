@@ -16,6 +16,7 @@ import org.elevators.containers.Request;
 import org.elevators.enums.Direction;
 import org.elevators.models.ElevatorManager;
 import org.elevators.threads.RequestsHandler;
+import org.elevators.util.Config;
 import org.elevators.util.RequestGenerator;
 import org.openjfx.listeners.ElevatorManagerChangeListener;
 import org.openjfx.listeners.ElevatorProcessChangeListener;
@@ -30,7 +31,7 @@ public class ElevatorController implements Initializable {
 	
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		Building building = new Building(10);
+		Building building = new Building(Config.getFloorsNum());
 		manager = new ElevatorManager(building);
 		RequestsHandler requestsHandler = new RequestsHandler(manager);
 		

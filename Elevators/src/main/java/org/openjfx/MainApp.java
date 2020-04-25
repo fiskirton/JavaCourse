@@ -8,12 +8,13 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import org.elevators.util.Config;
 
 public class MainApp extends Application {
 
 	public static void main(String[] args) {
+		Config.parse(args);
 		launch(args);
-		
 	}
 
 	@Override
