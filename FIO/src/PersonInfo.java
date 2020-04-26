@@ -5,18 +5,6 @@ import java.time.format.DateTimeParseException;
 
 
 public class PersonInfo {
-    private final static String[] endings = {
-            "ия",
-            "ья",
-            "а"
-    };
-
-    private final static String[] exception_names = {
-            "никита",
-            "илья",
-            "данила"
-    };
-
     private String surname;
     private String name;
     private String patronymic;
@@ -35,22 +23,9 @@ public class PersonInfo {
     }
 
     private String getSex(){
-
-        for (String exception_name :
-                exception_names){
-            if (this.name.toLowerCase().equals(exception_name)){
-                return "male";
-            }
-        }
-
-        for (String ending :
-                endings) {
-            if (this.name.lastIndexOf(ending) > 0){
-                return "female";
-            }
-        }
-
-        return "male";
+        if (this.patronymic.toLowerCase().charAt(this.patronymic.length() - 1) == 'ч'){
+            return "male";
+        } else { return "female"; }
     }
 
     private int getAge() throws DateTimeParseException {
