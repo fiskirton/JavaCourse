@@ -1,5 +1,6 @@
 package org.gui.Controllers;
 
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -48,7 +49,7 @@ public class MainController implements Initializable {
 	private FileChooser fileChooser;
 	private Stage stage;
 	
-	private static final String IMAGE_URLS = "src/main/resources/urls";
+	private static final String IMAGE_URLS = "src/main/resources/urls.txt";
 	
 	EventHandler<MouseEvent> imageClickHandler = e -> {
 		properties.clear();
@@ -145,7 +146,7 @@ public class MainController implements Initializable {
 			int targetId = Integer.parseInt(targetImage.getId());
 			try {
 				String mostSimilarImgPath = images.get(targetId).getMostSimilarImgPath(images);
-				properties.appendText("");
+				properties.appendText("most similar image path: ");
 				properties.appendText(mostSimilarImgPath);
 				properties.appendText("\n");
 			} catch (IOException exception) {
@@ -187,6 +188,9 @@ public class MainController implements Initializable {
 	
 	@FXML
 	private void deletePickedImage() {
+		if (targetImage == null) {
+			return;
+		}
 		int id = Integer.parseInt(targetImage.getId());
 		String deleteUrl = images.get(id).getFile().getAbsolutePath();
 		images.remove(id);
@@ -199,6 +203,7 @@ public class MainController implements Initializable {
 			exception.printStackTrace();
 		}
 		imagesPane.getChildren().remove(id);
+		properties.clear();
 		reindex();
 		repaint();
 	}
@@ -209,6 +214,10 @@ public class MainController implements Initializable {
 			view.setId(String.valueOf(id));
 			id++;
 		}
+	}
+
+	public void closeApp() {
+		stage.close();
 	}
 }
 

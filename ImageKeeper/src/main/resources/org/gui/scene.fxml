@@ -11,7 +11,7 @@
           <Menu mnemonicParsing="false" text="File">
             <items>
                   <MenuItem mnemonicParsing="false" onAction="#openFileChooser" text="Add image" />
-              <MenuItem mnemonicParsing="false" text="Close" />
+              <MenuItem mnemonicParsing="false" onAction="#closeApp" text="Close" />
             </items>
           </Menu>
           <Menu mnemonicParsing="false" text="Sort">
@@ -44,8 +44,17 @@
    <right>
       <VBox prefHeight="771.0" prefWidth="213.0" BorderPane.alignment="CENTER">
          <children>
-            <TextArea fx:id="properties" editable="false" prefHeight="456.0" prefWidth="213.0" wrapText="true" />
+            <TextArea fx:id="properties" disable="true" editable="false" prefHeight="456.0" prefWidth="213.0" wrapText="true">
+               <opaqueInsets>
+                  <Insets />
+               </opaqueInsets>
+               <VBox.margin>
+                  <Insets bottom="1.0" left="1.0" right="1.0" top="1.0" />
+               </VBox.margin></TextArea>
          </children>
+         <opaqueInsets>
+            <Insets />
+         </opaqueInsets>
       </VBox>
    </right>
 </BorderPane>

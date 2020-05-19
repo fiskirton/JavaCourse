@@ -116,12 +116,12 @@ public class Image {
 	@Override
 	public String toString() {
 		StringBuilder properties = new StringBuilder();
-		properties.append("Image properties\n");
+		properties.append("Image properties:\n");
 		imageProperties.forEach(
 				(k, v) -> properties.append(k).append(" : ").append(v).append("\n")
 		);
 		
-		properties.append("File properties\n");
+		properties.append("File properties:\n");
 		for (Map.Entry<String, String> pair: fileProperties.entrySet()) {
 			if (pair.getKey().equals("date")){
 				LocalDateTime zd = LocalDateTime.ofInstant(
