@@ -17,22 +17,21 @@ import java.util.Set;
 
 public class Parser {
 	
-	private BufferedImage image;
+	private final BufferedImage image;
 	private Metadata metadata;
 	private FileSystemDirectory sysDir;
 	private FileTypeDirectory typeDir;
 	private ExifSubIFDDirectory exifDir;
 	
-	Parser(File file) throws IOException, ImageProcessingException {
+	public Parser(File file) throws IOException, ImageProcessingException {
 		this.image = ImageIO.read(file);
 		this.metadata = ImageMetadataReader.readMetadata(file);
 		this.sysDir = metadata.getFirstDirectoryOfType(FileSystemDirectory.class);
 		this.typeDir = metadata.getFirstDirectoryOfType(FileTypeDirectory.class);
 		this.exifDir = metadata.getFirstDirectoryOfType(ExifSubIFDDirectory.class);
-		
 	}
 	
-	String getCreationDate() {
+	public String getCreationDate() {
 		Date date;
 		if (exifDir != null) {
 			date = exifDir.getDate(ExifSubIFDDirectory.TAG_DATETIME_ORIGINAL);
@@ -42,11 +41,11 @@ public class Parser {
 		return String.valueOf(date.getTime());
 	}
 	
-	String[] getResolution() {
+	public String[] getResolution() {
 		return new String[]{String.valueOf(image.getWidth()), String.valueOf(image.getHeight())};
 	}
 	
-	String getColorRange() {
+	public String getColorRange() {
 		Set<Integer> colors = new HashSet<>();
 		int height = image.getHeight();
 		int width = image.getWidth();
@@ -60,17 +59,17 @@ public class Parser {
 		return String.valueOf(colors.size());
 	}
 	
-	String getFileSize() {
+	public String getFileSize() {
 		String size = sysDir.getDescription(FileSystemDirectory.TAG_FILE_SIZE);
 		
 		return size.substring(0, size.indexOf(" "));
 	}
 	
-	String getFileExtension() {
+	public String getFileExtension() {
 		return typeDir.getDescription(FileTypeDirectory.TAG_DETECTED_FILE_TYPE_NAME);
 	}
 	
-	String getFileName() {
+	public String getFileName() {
 		return sysDir.getDescription(FileSystemDirectory.TAG_FILE_NAME);
 	}
 	

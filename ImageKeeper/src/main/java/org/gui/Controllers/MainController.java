@@ -3,31 +3,33 @@ package org.gui.Controllers;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.control.TextArea;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
+import javafx.stage.FileChooser;
 
+import javafx.stage.Stage;
 import org.collection.Image;
 import org.collection.ImageCreator;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.ResourceBundle;
+import java.nio.file.StandardOpenOption;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class MainController implements Initializable {
 	
 	List<Image> images = null;
-	ImageCreator imageCreator;
+	Set<String> urls;
 	Map<String, Comparator<Image>> comparators = Map.ofEntries(
 			Map.entry("filename", Comparator.comparing(img -> img.getFileProperty("filename"))),
 			Map.entry("range", Comparator.comparing(img -> img.getImageProperty("range"))),
@@ -42,43 +44,49 @@ public class MainController implements Initializable {
 	@FXML
 	private TextArea properties;
 	
+	private ImageView targetImage;
+	private FileChooser fileChooser;
+	private Stage stage;
+	
+	private static final String IMAGE_URLS = "src/main/resources/urls";
+	
 	EventHandler<MouseEvent> imageClickHandler = e -> {
 		properties.clear();
-		ImageView imageView = (ImageView) e.getTarget();
-		int id = Integer.parseInt(imageView.getId());
+		targetImage = (ImageView) e.getTarget();
+		int id = Integer.parseInt(targetImage.getId());
 		Image image = images.get(id);
 		properties.appendText(image.toString());
-		properties.appendText("\n");
 	};
 	
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		String urls = "/home/fiskirton/Documents/Projects/repos/JavaCourse/ImageKeeper/src/main/resources/urls";
-		
-		imageCreator = new ImageCreator();
-		
-		try (Stream<String> stream = Files.lines(Paths.get(urls))){
-			images = stream
-					.map(imageCreator::create)
+		fileChooser= new FileChooser();
+		urls = new HashSet<>();
+		try (Stream<String> stream = Files.lines(Paths.get(IMAGE_URLS))){
+			stream.forEach(urls::add);
+			images = urls.stream()
+					.map(ImageCreator::create)
+					.filter(Objects::nonNull)
 					.collect(Collectors.toList());
-			
 		} catch (IOException ex){
 			ex.printStackTrace();
 		}
-		
 		fillPane();
-		
 	}
 	
 	public void fillPane(){
 		int id = 0;
 		for (Image image : images) {
-			javafx.scene.image.ImageView imageView = new ImageView(createNewImage(image.getFile()));
-			imageView.addEventFilter(MouseEvent.MOUSE_CLICKED, imageClickHandler);
-			imageView.setId(String.valueOf(id));
-			imagesPane.getChildren().add(imageView);
+			imagesPane.getChildren().add(makeImgView(image, id));
 			id++;
 		}
+	}
+	
+	public ImageView makeImgView(Image image, int id) {
+		javafx.scene.image.ImageView imageView = new ImageView(createNewImage(image.getFile()));
+		imageView.addEventFilter(MouseEvent.MOUSE_CLICKED, imageClickHandler);
+		imageView.setId(String.valueOf(id));
+		return imageView;
 	}
 	
 	public String getPath(File file){
@@ -131,5 +139,76 @@ public class MainController implements Initializable {
 		repaint();
 	}
 	
+	@FXML
+	private void findMostSimilar() {
+		if (targetImage != null) {
+			int targetId = Integer.parseInt(targetImage.getId());
+			try {
+				String mostSimilarImgPath = images.get(targetId).getMostSimilarImgPath(images);
+				properties.appendText("");
+				properties.appendText(mostSimilarImgPath);
+				properties.appendText("\n");
+			} catch (IOException exception) {
+				exception.printStackTrace();
+			}
+		}
+	}
+	
+	public void setStage(Stage stage) {
+		this.stage = stage;
+	}
+	
+	@FXML
+	private void openFileChooser() throws IOException {
+		List<File> files = fileChooser.showOpenMultipleDialog(stage);
+		Set<String> formats = new HashSet<>(Arrays.asList("jpg", "jpeg", "png"));
+		files = files.stream()
+				.filter(path -> formats.contains(path.getAbsolutePath().substring(path.getAbsolutePath().lastIndexOf('.') + 1)))
+				.collect(Collectors.toList());
+		try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(IMAGE_URLS), StandardOpenOption.APPEND)) {
+			for (File file : files) {
+				try {
+					if (urls.contains(file.getAbsolutePath())) {
+						continue;
+					}
+					Image newImage = ImageCreator.create(file.getAbsolutePath());
+					images.add(newImage);
+					urls.add(file.getAbsolutePath());
+					assert newImage != null;
+					imagesPane.getChildren().add(makeImgView(newImage, images.size() - 1));
+					repaint();
+					writer.write("\n" + file.getAbsolutePath());
+				} catch (IOException exception) {
+					exception.printStackTrace();
+				}
+			}
+		}
+	}
+	
+	@FXML
+	private void deletePickedImage() {
+		int id = Integer.parseInt(targetImage.getId());
+		String deleteUrl = images.get(id).getFile().getAbsolutePath();
+		images.remove(id);
+		urls.remove(deleteUrl);
+		try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(IMAGE_URLS))) {
+			for (String url: urls) {
+				writer.write(url + "\n");
+			}
+		} catch (IOException exception) {
+			exception.printStackTrace();
+		}
+		imagesPane.getChildren().remove(id);
+		reindex();
+		repaint();
+	}
+	
+	public void reindex() {
+		int id = 0;
+		for (Node view: imagesPane.getChildren()) {
+			view.setId(String.valueOf(id));
+			id++;
+		}
+	}
 }
 

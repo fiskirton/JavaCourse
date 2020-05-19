@@ -7,8 +7,11 @@ import java.io.IOException;
 
 public class ImageCreator {
 	
-	public Image create(String url) {
+	public static Image create(String url) {
 		File file = new File(url);
+		if(!file.exists() || file.isDirectory()) {
+			return null;
+		}
 		
 		Parser parser = null;
 		try {
